@@ -1,0 +1,29 @@
+https://www.geeksforgeeks.org/making-linux-shell-c/
+https://www.guru99.com/linux-redirection.html
+
+Esto va a requerir de varias ideas. Planteemos unas preguntas:
+
+¿Cómo vamos a preparar a las tuberías?
+	Si nada más fueran dos comandos, pues no sería tan complicado. Ese no
+	va a ser el caso, por lo que tenemos que ponernos creativos.
+
+¿Cómo vamos a poner la redirección?
+
+https://www.guru99.com/linux-redirection.html
+https://stackoverflow.com/questions/33323449/how-to-use-execvp-in-c-to-sort-a-file-and-write-into-another-file
+
+	Primero tenemos que detectarla:
+		- >/>>: Sobreescribir/Adjuntar la salida al segundo argumento.
+		- <: Recibir los datos desde el argumento.
+
+	Para esto, podemos guardar el último resultado en algún lado. Quizá
+	en un archivo log temporal (crear, escribir, leer, borrar). O, una
+	tubería podría lograrlo (Prac5), tal que al encontrar un ">" o un ">>",
+	se redirija la información hacia el archivo que se menciona en el open.
+
+	En concreto, la entrada "a > b" establece a b como el descriptor de
+	archivos, se crea la tubería, y se hace la operación.
+
+	Recordemos también que hay que considerar las opciones separadas por
+	espacios. Realmente hay que trabajar las cadenas...
+	
