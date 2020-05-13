@@ -1,4 +1,4 @@
-#include "prompt.h"
+#include "headers/prompt.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -71,8 +71,9 @@ main (void)
 	}
 
       exit_status = WEXITSTATUS (status);
+
+      printf ("\n");
     }
-  printf ("\n");
 
   return 0;
 }
