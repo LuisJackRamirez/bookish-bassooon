@@ -17,8 +17,8 @@ main (void)
   int words = 0;
 
   char **args;
-  char buffer[128];
-  char prompt[128];
+  char buffer[256];
+  char prompt[256];
 
   while (1)
     {
@@ -33,11 +33,13 @@ main (void)
 	{
 	  flag = 1;
 
-	  getPrompt (buffer);
+	  //Se obtiene el prompt desde
+	  //el archivo prompt.c
+	  getPrompt (prompt);
+	  printf ("%s", prompt);
 
-	  printf ("%s", buffer);
-
-	  fgets (buffer, 128, stdin);
+	  //Recibir los commandos de entrada
+	  fgets (buffer, 256, stdin);
 
 	  while (buffer[i] != '\0')
 	    {
@@ -52,13 +54,13 @@ main (void)
 	  args[0] = "./comando.x";
 	  args[1] = strtok (buffer, " \n");
 
-	  if (strcmp (args[1], "exit") == 0)
-	    exit (-1);
-
 	  for (int j = 2; j <= words; j++)
 	    args[j] = strtok (NULL, " \n");
 
 	  args[words + 1] = NULL;
+
+	  if (strcmp (args[1], "exit") == 0)
+	    exit (-1);
 
 	  if (flag == 1)
 	    execvp (args[0], args);

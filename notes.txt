@@ -4,10 +4,13 @@ https://www.guru99.com/linux-redirection.html
 Esto va a requerir de varias ideas. Planteemos unas preguntas:
 
 ¿Cómo vamos a preparar a las tuberías?
+
 	Si nada más fueran dos comandos, pues no sería tan complicado. Ese no
 	va a ser el caso, por lo que tenemos que ponernos creativos.
 
-¿Cómo vamos a poner la redirección?
+
+
+¿Cómo vamos a poner la redirección de salida?
 
 https://www.guru99.com/linux-redirection.html
 https://stackoverflow.com/questions/33323449/how-to-use-execvp-in-c-to-sort-a-file-and-write-into-another-file
@@ -25,5 +28,33 @@ https://stackoverflow.com/questions/33323449/how-to-use-execvp-in-c-to-sort-a-fi
 	archivos, se crea la tubería, y se hace la operación.
 
 	Recordemos también que hay que considerar las opciones separadas por
-	espacios. Realmente hay que trabajar las cadenas...
+	espacios, lo que ya tenemos. 
+
+
+
+¿Cómo vamos a poner la redirección de entrada?
+
+	Quizá se haría de la misma manera, pero estableciendo a A como el
+	descriptor de archivos.
+
+
+
+Prioridad
+	
+	Una redirección tiene prioridad sobre la tubería; es decir, si vemos el siguiente comando:
+		ls | sort -n | wc > archivo.txt
+
+	Esto no es "dos tuberías seguidas de una redirección", sino "una redirección de dos tuberías". 
+	Esta aclaración es importante porque es más fácil lidiar con dos búferes (input y output) que con
+	un número desconocido de procesos en una tubería.
+
+	Entonces, primero separamos entre los dos tokens.
+		- Si encontramos '>', regresamos uno
+		- Si no, buscamos '>>'. De haber uno, regresamos dos
+		- Por último, si encuentra '<', regresamos tres.
+		- Si no, regresar cero.
+
+	Esto nos los va a dividir en dos argumentos. Si el lado derecho o el izquierdo tienen tuberías o más, se lidian como tal.
+
+
 	

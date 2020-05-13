@@ -2,8 +2,6 @@
 #define HEADER_H
 
 void getPrompt (char *);
-void getMachineName (char *);
-void getPath (char *);
-void getUsername (char *);
+void getOutput (char *, char *);
 
 #endif
