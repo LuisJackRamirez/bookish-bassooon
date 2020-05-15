@@ -1,5 +1,5 @@
-#ifndef HEADER_H
-#define HEADER_H
+#ifndef PROMPT_H_
+#define PROMPT_H_
 
 void getPrompt (char *);
 void getOutput (char *, char *);

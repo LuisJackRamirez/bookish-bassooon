@@ -1,4 +1,5 @@
 #include "headers/prompt.h"
+#include "headers/words.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -41,23 +42,7 @@ main (void)
 	  //Recibir los commandos de entrada
 	  fgets (buffer, 256, stdin);
 
-	  while (buffer[i] != '\0')
-	    {
-	      if (buffer[i] == ' ' || buffer[i] == '\n')
-		words++;
-
-	      i++;
-	    }
-
-	  args = malloc (words * sizeof (char *) + 2);
-
-	  args[0] = "./comando.x";
-	  args[1] = strtok (buffer, " \n");
-
-	  for (int j = 2; j <= words; j++)
-	    args[j] = strtok (NULL, " \n");
-
-	  args[words + 1] = NULL;
+	  args = getArgs (buffer);
 
 	  if (strcmp (args[1], "exit") == 0)
 	    exit (-1);
