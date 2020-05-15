@@ -41,12 +41,15 @@ https://stackoverflow.com/questions/33323449/how-to-use-execvp-in-c-to-sort-a-fi
 
 Prioridad
 	
-	Una redirección tiene prioridad sobre la tubería; es decir, si vemos el siguiente comando:
+	Una redirección tiene prioridad sobre la tubería; es decir, 
+	si vemos el siguiente comando:
 		ls | sort -n | wc > archivo.txt
 
-	Esto no es "dos tuberías seguidas de una redirección", sino "una redirección de dos tuberías". 
-	Esta aclaración es importante porque es más fácil lidiar con dos búferes (input y output) que con
-	un número desconocido de procesos en una tubería.
+	Esto no es "dos tuberías seguidas de una redirección", 
+	sino "una redirección de dos tuberías". Esta aclaración es 
+	importante porque es más fácil lidiar con dos búferes 
+	(input y output) que con un número desconocido 
+	de procesos en una tubería.
 
 	Entonces, primero separamos entre los dos tokens.
 		- Si encontramos '>', regresamos uno
@@ -54,7 +57,8 @@ Prioridad
 		- Por último, si encuentra '<', regresamos tres.
 		- Si no, regresar cero.
 
-	Esto nos los va a dividir en dos argumentos. Si el lado derecho o el izquierdo tienen tuberías o más, se lidian como tal.
+	Esto nos los va a dividir en dos argumentos. Si el lado derecho 
+	o el izquierdo tienen tuberías o más, se lidian como tal.
 
 
 	
