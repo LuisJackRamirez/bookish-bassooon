@@ -8,14 +8,16 @@
 int
 main (void)
 {
+  int mode = 0;	
   char buffer[256];
   char *input;
   char *output;
 
   fgets (buffer, sizeof (buffer), stdin);
+  scanf ("%i", &mode);
 
   getInOut (&input, &output, buffer); 
-  executeRedirection (input, output, 1);
+  executeRedirection (input, output, mode);
 
   return 0;
 }
@@ -51,14 +53,12 @@ getInOut (char **input, char **output, char *buffer)
   i = strtok (buffer, ">");
   o = strtok (NULL, ">");
 
-  i[strlen(i) - 1] = '\0';
+  i[strlen(i) - 1] = '\n';
   o++;
   o = strtok (o, "\n");
 
   *input = i;
   *output = o;
-
-  printf ("%s\n%s\n\n", *input, *output);
 
   return;
 }
@@ -71,8 +71,6 @@ getArgs (char *buffer)
 
   char **args;
 
-  words++;
-
   //Contar número de palabras para
   //poder obtener la memoria requerida
   while (buffer[i] != '\0')
@@ -84,7 +82,7 @@ getArgs (char *buffer)
     }
 
   //Conseguir espacio de memoria con el tamaño requerido
-  args = malloc (words * sizeof (char *) + 2);
+  args = malloc ((words + 1) * sizeof (char *));
 
   //Preparar los argumentos que recibirá "comando.x".
   args[0] = "./comando.x";
