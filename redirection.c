@@ -14,6 +14,7 @@ main (void)
 {
   int mode = 0;
 
+  char buffer[256];
   char input[16];
   char output[16];
   char *in;
@@ -24,10 +25,12 @@ main (void)
   in = fgets (input, sizeof (input), stdin);
   in = strtok (in, "\n");
   out = fgets (output, sizeof (output), stdin);
-  out = strtok (out, "\n");
-  scanf ("%d", &mode);
-
-  executeRedirection (in, out, mode);
+  //scanf ("%d", &mode);
+  
+  fgets (buffer, sizeof (buffer), stdin);
+  getInOut (&out, &in, buffer, "<");
+  
+  executeRedirectionOut (in, out);
 
   return 0;
 }
@@ -62,9 +65,51 @@ executeRedirection (char *input, char *output, int mode)
     }
   else if (pid == 0)
     {
-      dup2 (fileDes, fileno (stdout));  
-      //close (1);
-      //dup (fileDes);
+      //dup2 (fileDes, fileno (stdout));  
+      close (1);
+      dup (fileDes);
+
+      execvp (inArgs[0], inArgs);
+      perror ("\nError en exec ()\n");
+    }
+  else
+    {
+      close (fileDes);
+      wait (NULL);
+    }
+
+  return;
+}
+
+void
+executeRedirectionOut (char *input, char *output)
+{
+  int fileDes = 0;
+  int pid = 0;
+
+  char **inArgs;
+  inArgs = getArgs (output);
+
+  fileDes = open (input, O_RDONLY, S_IRWXU);
+
+  if (fileDes == -1)
+    {
+      perror ("\nError en apertura de archivo\n");
+      exit (-1);
+    }
+
+  pid = fork ();
+
+  if (pid == -1)
+    {
+      perror ("\nError en fork ()\n");
+      exit (-1);
+    }
+  else if (pid == 0)
+    {
+      //dup2 (fileDes, fileno (stdout));  
+      close (0);
+      dup (fileDes);
 
       execvp (inArgs[0], inArgs);
       perror ("\nError en exec ()\n");

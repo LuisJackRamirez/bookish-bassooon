@@ -3,6 +3,8 @@
 
 int checkRedirection (char *);
 char **getArgs (char *);
-void getInOut (char **, char **, char *);
+void getInOut (char **, char **, char *, char *);
+char *trimLeadingSpace (char *str);
+void trimTrailingSpace (char *str);
 
 #endif

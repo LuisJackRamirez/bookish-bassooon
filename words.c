@@ -45,20 +45,27 @@ checkRedirection (char *buffer)
 }
 
 void
-getInOut (char **input, char **output, char *buffer)
+getInOut (char **input, char **output, char *buffer, char *sep)
 {
+  char def[256];
   char *i;
+  char *in;
   char *o;
 
-  i = strtok (buffer, ">");
-  o = strtok (NULL, ">");
+  i = strtok (buffer, sep);
+  o = strtok (NULL, sep);
 
-  i[strlen(i) - 1] = '\n';
-  o++;
-  o = strtok (o, "\n");
+  trimTrailingSpace (i);
+  o = trimLeadingSpace (o);
+  trimTrailingSpace (o);
 
-  *input = i;
+  in = malloc ((sizeof (char) * strlen (i)) + 2);
+  in = strcpy (in, i);
+  in[strlen (in)] = '\n';
+  in[strlen (in) + 1] = '\0';
+
   *output = o;
+  *input = in;
 
   return;
 }
@@ -94,4 +101,64 @@ getArgs (char *buffer)
   args[words + 1] = NULL;
 
   return args;
+}
+
+char *
+trimLeadingSpace (char *str)
+{
+  int i = 0;
+  char *in;
+
+  in = str;
+
+  while (str[i] == ' ' || str[i] == '\t' || str[i] == '\n')
+    {
+      in++;
+      i++;
+    }
+
+  str = in;
+
+  return in;
+}
+
+void
+trimTrailingSpace (char *str)
+{
+  int index = 0;
+  int i = 0;
+
+  index = -1;
+
+  while (str[i] != '\0')
+    {
+      if (str[i] != ' ' && str[i] != '\t' && str[i] != '\n')
+        index = i;
+
+      i++;
+    }
+
+  if (index != -1)
+    str[index + 1] = '\0';
+
+  return;
+}
+
+void
+shellPrompts (char *)
+{ 
+  //hello: "All your base are belong to us\n"
+  //exit: Salir	
+  
+  int numOwnCommands = 0;
+
+  numOwnCommands = 2;
+
+  char* ownCommands[numOwnCommands];
+  
+  ownCommands[0] = "hello";
+
+  if ()
+    {
+    }
 }

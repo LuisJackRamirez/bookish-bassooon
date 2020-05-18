@@ -11,6 +11,7 @@
 int
 main (void)
 {
+  int calledExit = 0;
   int exit_status = 0;
   int flag = 1;
   int i = 0;
@@ -47,6 +48,8 @@ main (void)
 	  //Recibir la linea de comandos de entrada.
 	  fgets (buffer, 256, stdin);
 
+	  shellPrompts (buffer);
+
 	  //Descubrir si hay redirección > >> < en la entrada.
 	  //  0. No hay redirección.
 	  //  1. >	Redirección de salida, sobreescritura.
@@ -69,7 +72,7 @@ main (void)
 		break;
 
 	      case 1:
-		getInOut (&input, &output, buffer);
+		getInOut (&input, &output, buffer, ">");
 
 		if (input != NULL || output != NULL)
 		  executeRedirection (input, output, 1);
@@ -80,10 +83,21 @@ main (void)
 		break;
 	      
 	      case 2:
-		getInOut (&input, &output, buffer);
+		getInOut (&input, &output, buffer, ">>");
 
 		if (input != NULL || output != NULL)
 		  executeRedirection (input, output, 2);
+		else
+		  printf ("Error en redirección\n");
+
+		exit (0);
+		break;
+	      
+	      case 3:
+		getInOut (&output, &input, buffer, "<");
+
+		if (input != NULL || output != NULL)
+		  executeRedirectionOut (input, output);
 		else
 		  printf ("Error en redirección\n");
 
