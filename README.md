@@ -3,11 +3,9 @@ Shell terminal made in C
 
 TODO:
 
-* ~terminal.c : Pass parsing section to a separate function~. Done as of 14/05/20
-* ~prompt.c : Transform to implementation with pipes as seen in class~. No longer required. We got clearance to use popen ().
 * Redirection : 
-  * ~Detect redirection~ Done as of 15/05/20.
-  * Finish redirection operators by ~15/05/20~. Not complete. 17/05/20.
-    * ~Output~ Complete as of 16/05/20.
-    * Input.
+  * ~Finish redirection operators by 15/05/20.~ Completed as of 18/05/20.
+  * Add support for multiple redirection. Should improve the experience, but will be treated as optional
 * All .c files : Add comments (in Spanish) to facilitate comprehension.
+* Pipes :
+  * Create function to execute multiple pipes by 20/05/20.
