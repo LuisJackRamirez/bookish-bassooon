@@ -4,6 +4,7 @@
 int checkRedirection (char *);
 char **getArgs (char *);
 void getInOut (char **, char **, char *, char *);
+int numPipes (char *);
 char *trimLeadingSpace (char *str);
 void trimTrailingSpace (char *str);
 

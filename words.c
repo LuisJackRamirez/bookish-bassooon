@@ -89,7 +89,7 @@ getArgs (char *buffer)
     }
 
   //Conseguir espacio de memoria con el tamaño requerido
-  args = malloc ((words + 1) * sizeof (char *));
+  args = malloc ((words + 2) * sizeof (char *));
 
   //Preparar los argumentos que recibirá "comando.x".
   args[0] = "./comando.x";
@@ -98,9 +98,26 @@ getArgs (char *buffer)
   for (int j = 2; j <= words; j++)
     args[j] = strtok (NULL, " \n");
 
-  args[words + 1] = NULL;
+  args[words + 1] = (char *) NULL;
 
   return args;
+}
+
+int
+numPipes (char *buffer)
+{
+  int i = 0;	
+  int pipes = 0;
+
+  while (buffer[i] != '\0')
+    {
+      if (buffer[i] == '|')
+        pipes++;
+
+      i++;
+    }
+
+  return pipes;
 }
 
 char *
@@ -144,6 +161,7 @@ trimTrailingSpace (char *str)
   return;
 }
 
+/*
 void
 shellPrompts (char *)
 { 
@@ -161,4 +179,4 @@ shellPrompts (char *)
   if ()
     {
     }
-}
+}*/
