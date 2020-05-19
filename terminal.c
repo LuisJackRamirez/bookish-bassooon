@@ -48,7 +48,7 @@ main (void)
 	  //Recibir la linea de comandos de entrada.
 	  fgets (buffer, 256, stdin);
 
-	  shellPrompts (buffer);
+	  //shellPrompts (buffer);
 
 	  //Descubrir si hay redirección > >> < en la entrada.
 	  //  0. No hay redirección.

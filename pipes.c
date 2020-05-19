@@ -3,95 +3,75 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
+void executePipes (char ***);
 
 int
 main (void)
 {
   char buffer[256];
-  char **group;
   char ***pipedArgs;
 
   fgets (buffer, sizeof (buffer), stdin);
 
   pipedArgs = getPipedArgs (buffer);
+  executePipes (pipedArgs);
 
   exit (0);
 }
 
-char ***
-getPipedArgs (char *buffer)
+void
+executePipes (char ***pipedArgs)
 {
-  char **group;
-  char ***pipedArgs;
-  int i = 0;
-  int pipes = 0;
+  int argIn = 0;
+  int fd[2] = {0, 0};
+  int pid = 0;
 
-  pipes = numPipes (buffer);
+  char **index = NULL;
 
-  if (pipes != 0)
+  index = *pipedArgs;
+
+  while (index != NULL)
     {
-      group = getStrGroup (buffer, pipes);
-      pipedArgs = getGroupSet (group, pipes);
+      if (pipe (fd) == -1)
+        {
+	  perror ("Error en pipe ");
+	  exit (-1);
+	}
 
-      return pipedArgs;
-    }
-  else
-    return NULL;
-}
+      pid = fork ();
 
-char ***
-getGroupSet (char **group, int pipes)
-{
-  char ***pipedArgs;
-  int i = 0;
+      if (pid == -1)
+        {
+	  perror ("Error en pid ");
+	  exit (-1);
+	}
+      if (pid == 0)
+        {
+	  close (0);
+	  dup (argIn);
 
-  pipedArgs = malloc ((pipes + 1) * sizeof (char **));
+	  if (*(pipedArgs + 1) != NULL)
+	    {
+	      close (1);
+	      dup (fd[1]);
+	    }
 
-  while (i <= pipes)
-    {
-      pipedArgs[i] = getArgs (group[i]);
-
-      i++;
-    }
-
-  return pipedArgs;
-}
-
-char **
-getStrGroup (char *buffer, int pipes)
-{
-  int i = 0;
-  char *in;
-  char **group;
-
-  group = malloc ((pipes + 1) * sizeof (char *));
-
-  group[0] = strtok (buffer, "|");
-  group[0] = trimLeadingSpace (group[0]);
-  trimTrailingSpace (group[0]);
-      
-  i++;
-  while (i <= pipes)
-    {
-      group[i] = strtok (NULL, "|");
-      group[i] = trimLeadingSpace (group[i]);
-      trimTrailingSpace (group[i]);
-
-      i++;
+	  close (fd[0]);
+	  execvp (index[0], index);
+	  perror ("Error en exec ");
+	  exit (-1);
+	}
+      else
+        {
+	  wait (NULL);
+	  close (fd[1]);
+	  argIn = fd[0];
+	  index++;
+	}
     }
 
-  i = 0;
-  while (i <= pipes)
-    {
-      in = malloc ((sizeof (char) * strlen (group[i])) + 2);
-      in = strcpy (in, group[i]);
-      in[strlen (in)] = ' ';
-      in[strlen (in) + 1] = ' ';
-
-      group[i] = in;
-
-      i++;
-    }
-
-  return group;
+  return;
 }

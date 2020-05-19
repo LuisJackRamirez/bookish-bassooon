@@ -15,24 +15,20 @@ main (void)
   int mode = 0;
 
   char buffer[256];
-  char input[16];
-  char output[16];
   char *in;
   char *out;
 
-  size_t bufsize = 16;
+  fgets (buffer, sizeof (buffer), stdin); 
+  mode = checkRedirection (buffer);
+		
+  getInOut (&in, &out, buffer, ">");
 
-  in = fgets (input, sizeof (input), stdin);
-  in = strtok (in, "\n");
-  out = fgets (output, sizeof (output), stdin);
-  //scanf ("%d", &mode);
+  if (in != NULL || out != NULL)
+    executeRedirection (in, out, 1);
+  else
+    printf ("Error en redirección\n");
   
-  fgets (buffer, sizeof (buffer), stdin);
-  getInOut (&out, &in, buffer, "<");
-  
-  executeRedirectionOut (in, out);
-
-  return 0;
+  exit (0);
 }
 */
 
@@ -46,7 +42,7 @@ executeRedirection (char *input, char *output, int mode)
   inArgs = getArgs (input);
 
   if (mode == 1)      
-    fileDes = open (output, O_CREAT|O_WRONLY, S_IRWXU);
+    fileDes = open (output, O_CREAT|O_WRONLY|O_TRUNC, S_IRWXU);
   else if (mode == 2)
     fileDes = open (output, O_CREAT|O_WRONLY|O_APPEND, S_IRWXU);
 
@@ -77,6 +73,8 @@ executeRedirection (char *input, char *output, int mode)
       close (fileDes);
       wait (NULL);
     }
+
+  free (inArgs);
 
   return;
 }
@@ -119,6 +117,8 @@ executeRedirectionOut (char *input, char *output)
       close (fileDes);
       wait (NULL);
     }
+
+  free (inArgs);
 
   return;
 }

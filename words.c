@@ -47,10 +47,11 @@ checkRedirection (char *buffer)
 void
 getInOut (char **input, char **output, char *buffer, char *sep)
 {
+  int length = 0;
   char def[256];
-  char *i;
-  char *in;
-  char *o;
+  char *i = NULL;
+  char *in = NULL;
+  char *o = NULL;
 
   i = strtok (buffer, sep);
   o = strtok (NULL, sep);
@@ -59,10 +60,15 @@ getInOut (char **input, char **output, char *buffer, char *sep)
   o = trimLeadingSpace (o);
   trimTrailingSpace (o);
 
-  in = malloc ((sizeof (char) * strlen (i)) + 2);
+  length = strlen (i);
+
+  in = malloc (sizeof (char) * (length + 2));
+
+  memset (in, 0, sizeof (char) * (length + 2));
+
   in = strcpy (in, i);
   in[strlen (in)] = '\n';
-  in[strlen (in) + 1] = '\0';
+  //in[strlen (in) + 1] = '\0';
 
   *output = o;
   *input = in;
@@ -101,6 +107,90 @@ getArgs (char *buffer)
   args[words + 1] = (char *) NULL;
 
   return args;
+}
+
+char ***
+getPipedArgs (char *buffer)
+{
+  char **group;
+  char ***pipedArgs;
+  int i = 0;
+  int pipes = 0;
+
+  pipes = numPipes (buffer);
+
+  if (pipes != 0)
+    {
+      group = getStrGroup (buffer, pipes);
+      pipedArgs = getGroupSet (group, pipes);
+
+      return pipedArgs;
+    }
+  else
+    return NULL;
+
+  free (group);
+}
+
+char ***
+getGroupSet (char **group, int pipes)
+{
+  char ***pipedArgs;
+  int i = 0;
+
+  pipedArgs = malloc ((pipes + 1) * sizeof (char **));
+
+  while (i <= pipes)
+    {
+      pipedArgs[i] = getArgs (group[i]);
+
+      i++;
+    }
+
+  free (group);
+  return pipedArgs;
+}
+
+char **
+getStrGroup (char *buffer, int pipes)
+{
+  int i = 0;
+  char *in;
+  char **group;
+
+  group = malloc ((pipes + 1) * sizeof (char *));
+
+  group[0] = strtok (buffer, "|");
+  group[0] = trimLeadingSpace (group[0]);
+  trimTrailingSpace (group[0]);
+      
+  i++;
+  while (i <= pipes)
+    {
+      group[i] = strtok (NULL, "|");
+      group[i] = trimLeadingSpace (group[i]);
+      trimTrailingSpace (group[i]);
+
+      i++;
+    }
+
+  i = 0;
+  while (i <= pipes)
+    {
+      in = malloc ((sizeof (char) * strlen (group[i])) + 3);
+
+      memset (in, 0, sizeof (char) * strlen (group[i]) + 3);
+
+      in = strcpy (in, group[i]);
+      in[strlen (in)] = ' ';
+      in[strlen (in) + 1] = '\0';
+
+      group[i] = in;
+
+      i++;
+    }
+
+  return group;
 }
 
 int
