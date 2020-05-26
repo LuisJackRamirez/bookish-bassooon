@@ -5,7 +5,7 @@ int checkRedirection (char *);
 char **getArgs (char *);
 char ***getGroupSet (char **, int);
 void getInOut (char **, char **, char *, char *);
-char ***getPipedArgs (char *);
+char ***getPipedArgs (char *, int *);
 char **getStrGroup (char *, int);
 int numPipes (char *);
 char *trimLeadingSpace (char *str);

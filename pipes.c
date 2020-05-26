@@ -6,39 +6,48 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-void executePipes (char ***);
+void executePipes (char ***, int);
 
 int
 main (void)
 {
   char buffer[256];
   char ***pipedArgs;
+  int pipes = 0;
 
   fgets (buffer, sizeof (buffer), stdin);
 
-  pipedArgs = getPipedArgs (buffer);
-  executePipes (pipedArgs);
+  pipedArgs = getPipedArgs (buffer, &pipes);
+
+  if (pipedArgs != NULL)
+    executePipes (pipedArgs, pipes);
+  else
+    printf ("No pipes\n");
 
   exit (0);
 }
 
 void
-executePipes (char ***pipedArgs)
+executePipes (char ***pipedArgs, int pipes)
 {
+  int aux = 0;
   int argIn = 0;
-  int fd[2] = {0, 0};
+  int newPipe[2];
+  int oldPipe[2];
   int pid = 0;
 
-  char **index = NULL;
-
-  index = *pipedArgs;
-
-  while (index != NULL)
+  aux = dup(1);
+	 
+  argIn++;
+  while (*pipedArgs != NULL)
     {
-      if (pipe (fd) == -1)
+      if (argIn != pipes + 1)
         {
-	  perror ("Error en pipe ");
-	  exit (-1);
+	  if (pipe (newPipe) == -1)
+	    {
+	      perror ("Error en pipe ");
+	      exit (-1);
+	    }
 	}
 
       pid = fork ();
@@ -48,30 +57,55 @@ executePipes (char ***pipedArgs)
 	  perror ("Error en pid ");
 	  exit (-1);
 	}
-      if (pid == 0)
+      else if (pid == 0)
         {
-	  close (0);
-	  dup (argIn);
-
-	  if (*(pipedArgs + 1) != NULL)
+	  if (argIn != 1)
 	    {
-	      close (1);
-	      dup (fd[1]);
+	      dup2 (oldPipe[0], 0);
+	      close (oldPipe[0]);
+	      close (oldPipe[1]);
 	    }
 
-	  close (fd[0]);
-	  execvp (index[0], index);
+	  if (argIn != pipes + 1)
+	    {
+	      close (newPipe[0]);
+	      dup2 (newPipe[1], 1);
+	      close (newPipe[1]);
+	    }
+	  else
+	    {
+	      close (1);
+	      dup (aux);
+	      close (aux);
+	    }
+
+	  execvp (*(pipedArgs[0]), *pipedArgs);
 	  perror ("Error en exec ");
 	  exit (-1);
 	}
       else
         {
+	  if (argIn != 1)
+	    {
+	      close (oldPipe[0]);
+	      close (oldPipe[1]);
+	    }
+
+	  if (argIn != pipes + 1)
+	    {
+	      oldPipe[0] = newPipe[0];
+	      oldPipe[1] = newPipe[1];
+	    }
+
 	  wait (NULL);
-	  close (fd[1]);
-	  argIn = fd[0];
-	  index++;
+	  argIn++;
 	}
+
+      *pipedArgs++;
     }
+
+  close (newPipe[0]);
+  close (newPipe[1]);
 
   return;
 }

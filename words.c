@@ -110,19 +110,18 @@ getArgs (char *buffer)
 }
 
 char ***
-getPipedArgs (char *buffer)
+getPipedArgs (char *buffer, int *pipes)
 {
   char **group;
   char ***pipedArgs;
   int i = 0;
-  int pipes = 0;
 
-  pipes = numPipes (buffer);
+  *pipes = numPipes (buffer);
 
-  if (pipes != 0)
+  if (*pipes != 0)
     {
-      group = getStrGroup (buffer, pipes);
-      pipedArgs = getGroupSet (group, pipes);
+      group = getStrGroup (buffer, *pipes);
+      pipedArgs = getGroupSet (group, *pipes);
 
       return pipedArgs;
     }
@@ -138,7 +137,8 @@ getGroupSet (char **group, int pipes)
   char ***pipedArgs;
   int i = 0;
 
-  pipedArgs = malloc ((pipes + 1) * sizeof (char **));
+  pipedArgs = malloc ((pipes + 1) * sizeof (char **) + 1);
+  memset (pipedArgs, 0, (pipes + 1) * sizeof (char **) + 1);
 
   while (i <= pipes)
     {
@@ -159,6 +159,7 @@ getStrGroup (char *buffer, int pipes)
   char **group;
 
   group = malloc ((pipes + 1) * sizeof (char *));
+  memset (group, 0, sizeof (char *) * (pipes + 1));
 
   group[0] = strtok (buffer, "|");
   group[0] = trimLeadingSpace (group[0]);
