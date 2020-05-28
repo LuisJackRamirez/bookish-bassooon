@@ -1,13 +1,15 @@
 #include "headers/pipes.h"
 #include "headers/words.h"
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
 
-void executePipes (char ***, int);
-
+/*
 int
 main (void)
 {
@@ -26,6 +28,7 @@ main (void)
 
   exit (0);
 }
+*/
 
 void
 executePipes (char ***pipedArgs, int pipes)
@@ -34,8 +37,10 @@ executePipes (char ***pipedArgs, int pipes)
   int argIn = 0;
   int newPipe[2];
   int oldPipe[2];
+  int output = 0;
   int pid = 0;
 
+  output = open ("hopps.axr", O_CREAT|O_WRONLY|O_APPEND);
   aux = dup(1);
 	 
   argIn++;
