@@ -22,7 +22,7 @@ main (void)
   pipedArgs = getPipedArgs (buffer, &pipes);
 
   if (pipedArgs != NULL)
-    executePipes (pipedArgs, pipes);
+    executePipes (pipedArgs, pipes, NULL, 0);
   else
     printf ("No pipes\n");
 
@@ -31,17 +31,46 @@ main (void)
 */
 
 void
-executePipes (char ***pipedArgs, int pipes)
+executePipes (char ***pipedArgs, int pipes, char *output, int redirMode)
 {
   int aux = 0;
   int argIn = 0;
+  int in = 0;
   int newPipe[2];
   int oldPipe[2];
-  int output = 0;
+  int out = 0;
   int pid = 0;
 
-  output = open ("hopps.axr", O_CREAT|O_WRONLY|O_APPEND);
-  aux = dup(1);
+  if (output != NULL)
+    {
+      if (redirMode == 1)
+        out = open (output, O_CREAT|O_WRONLY|O_TRUNC, S_IRWXU);
+      else if (redirMode == 2)
+        out = open (output, O_CREAT|O_WRONLY|O_APPEND, S_IRWXU);
+      else if (redirMode == 3)
+        {
+	  in = open (output, O_RDONLY, S_IRWXU);
+
+	  close (0);
+	  dup (in);
+	}
+      
+      if (out == -1)
+        {
+          perror ("Error en open (pipes.c) ");
+          exit (-1);
+	}
+    }
+  else
+    {
+      out = dup(1);
+
+      if (out == -1)
+        {
+          perror ("Error en dup (pipes.c) ");
+          exit (-1);
+	}
+    }
 	 
   argIn++;
   while (*pipedArgs != NULL)
@@ -80,8 +109,8 @@ executePipes (char ***pipedArgs, int pipes)
 	  else
 	    {
 	      close (1);
-	      dup (aux);
-	      close (aux);
+	      dup (out);
+	      close (out);
 	    }
 
 	  execvp (*(pipedArgs[0]), *pipedArgs);

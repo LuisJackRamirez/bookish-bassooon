@@ -1,4 +1,5 @@
 #include "headers/prompt.h"
+#include "headers/pipes.h"
 #include "headers/redirection.h"
 #include "headers/words.h"
 #include <stdlib.h>
@@ -16,6 +17,7 @@ main (void)
   int flag = 1;
   int i = 0;
   int pid = 0;
+  int pipes = 0;
   int status = 0;
   int redirectionStatus = 0;
 
@@ -24,18 +26,22 @@ main (void)
   char prompt[256];
 
   char *input;
-  char *output; 
+  char *output;
   char **args;
+  char ***pipedArgs;
 
   while (1)
     {
       if (exit_status != 0)
-        break;
+	break;
 
       pid = fork ();
 
       if (pid == -1)
-	perror ("Error en la llamada a fork ()");
+        {
+	  perror ("Error en la llamada a fork ()");
+	  exit (-1);
+	}
       else if (pid == 0)
 	{
 	  flag = 1;
@@ -52,57 +58,100 @@ main (void)
 
 	  //Descubrir si hay redirección > >> < en la entrada.
 	  //  0. No hay redirección.
-	  //  1. >	Redirección de salida, sobreescritura.
-	  //  2. >>	Redirección de salida, concatenación.
-	  //  3. <	Redirección de entrada.
+	  //  1. >      Redirección de salida, sobreescritura.
+	  //  2. >>     Redirección de salida, concatenación.
+	  //  3. <      Redirección de entrada.
 	  redirectionStatus = checkRedirection (buffer);
 
 	  switch (redirectionStatus)
 	    {
-  	      case 0:
-	        //Separar argumentos, preparar para llevar a execvp ()
-	        args = getArgs (buffer);
+	    case 0:
+	      pipes = numPipes (buffer);
 
-		if (strcmp (args[1], "exit") == 0)
-		  exit (-1);
+	      if (pipes == 0)
+		{
+	          //Separar argumentos, preparar para llevar a execvp ()
+		  args = getArgs (buffer);
 
-		if (flag == 1)
+		  if (strcmp (args[1], "exit") == 0)
+		    exit (-1);
+
+		  //if (flag == 1)
 		  execvp (args[0], args);
+		  perror ("Error en exec :");
+		}
+	      else
+		{
+		  pipes = 0;
+		  pipedArgs = getPipedArgs (buffer, &pipes);
+		  executePipes (pipedArgs, pipes, NULL, 0);
+		  exit (0);
+		}
 
-		break;
+	      break;
 
-	      case 1:
-		getInOut (&input, &output, buffer, ">");
+	    case 1:
+	      getInOut (&input, &output, buffer, ">");
+	      pipes = numPipes (input);
 
-		if (input != NULL || output != NULL)
-		  executeRedirection (input, output, 1);
-		else
-		  printf ("Error en redirección\n");
+	      if (pipes == 0)
+	        {
+	          if (input != NULL || output != NULL)
+		    executeRedirection (input, output, 1);
+	          else
+		    printf ("Error en redirección\n");
+	        }
+	      else
+	        {
+		  pipes = 0;
+		  pipedArgs = getPipedArgs (input, &pipes);
+		  executePipes (pipedArgs, pipes, output, 1);
+		}
 
-		exit (0);
-		break;
-	      
-	      case 2:
-		getInOut (&input, &output, buffer, ">>");
+	      exit (0);
+	      break;
 
-		if (input != NULL || output != NULL)
-		  executeRedirection (input, output, 2);
-		else
-		  printf ("Error en redirección\n");
+	    case 2:
+	      getInOut (&input, &output, buffer, ">>");
+	      pipes = numPipes (input);
 
-		exit (0);
-		break;
-	      
-	      case 3:
-		getInOut (&output, &input, buffer, "<");
+	      if (pipes == 0)
+	        {
+	          if (input != NULL || output != NULL)
+		    executeRedirection (input, output, 2);
+	          else
+		    printf ("Error en redirección\n");
+	        }
+	      else
+	        {
+		  pipes = 0;
+		  pipedArgs = getPipedArgs (input, &pipes);
+		  executePipes (pipedArgs, pipes, output, 2);
+		}
 
-		if (input != NULL || output != NULL)
-		  executeRedirectionOut (input, output);
-		else
-		  printf ("Error en redirección\n");
+	      exit (0);
+	      break;
 
-		exit (0);
-		break;
+	    case 3:
+	      getInOut (&output, &input, buffer, "<");
+	      pipes = numPipes (output);
+
+	      if (pipes == 0)
+	        {
+	          if (input != NULL || output != NULL)
+		    executeRedirectionOut (input, output);
+	          else
+		    printf ("Error en redirección\n");
+	        }
+	      else
+	        {
+		  pipes = 0;
+		  pipedArgs = getPipedArgs (output, &pipes);
+		  executePipes (pipedArgs, pipes, input, 3);
+		}
+
+	      exit (0);
+	      break;
 	    }
 	}
       else
@@ -112,7 +161,7 @@ main (void)
 	}
 
       exit_status = WEXITSTATUS (status);
-      
+
       printf ("\n");
     }
 
