@@ -11,7 +11,7 @@ TODO:
 * Code format:
   * Add comments (in Spanish) to facilitate comprehension for all .c files.
   * Errors should be standarized. Each line of error should indicate:
-    * perror ("Error in [function], [file name] at [line number] : ");
+    * perror ("Error in [operation], [function], [file name] at [line number] : ");
   * Remove commented code WITH CAUTION.
 * Pipes :
   * Small memory issue with pipes.c: Uninitialized memory. Doesn't cause any known issues, no memory leak.
