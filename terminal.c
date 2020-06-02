@@ -23,6 +23,7 @@ main (void)
 
   char aux;
   char buffer[256];
+  char unalteredBuffer[256];
   char prompt[256];
 
   char *input;
@@ -38,7 +39,7 @@ main (void)
       pid = fork ();
 
       if (pid == -1)
-        {
+	{
 	  perror ("Error en la llamada a fork ()");
 	  exit (-1);
 	}
@@ -53,6 +54,7 @@ main (void)
 
 	  //Recibir la linea de comandos de entrada.
 	  fgets (buffer, 256, stdin);
+	  strcpy (unalteredBuffer, buffer);
 
 	  //shellPrompts (buffer);
 
@@ -63,95 +65,100 @@ main (void)
 	  //  3. <      Redirección de entrada.
 	  redirectionStatus = checkRedirection (buffer);
 
-	  switch (redirectionStatus)
+	  if (checkEgg (redirectionStatus, unalteredBuffer) == 1)
+	    exit (0);
+	  else
 	    {
-	    case 0:
-	      pipes = numPipes (buffer);
-
-	      if (pipes == 0)
+	      switch (redirectionStatus)
 		{
-	          //Separar argumentos, preparar para llevar a execvp ()
-		  args = getArgs (buffer);
+		case 0:
+		  pipes = numPipes (buffer);
 
-		  if (strcmp (args[1], "exit") == 0)
-		    exit (-1);
+		  if (pipes == 0)
+		    {
+		      //Separar argumentos, preparar para llevar a execvp ()
+		      args = getArgs (buffer);
 
-		  //if (flag == 1)
-		  execvp (args[0], args);
-		  perror ("Error en exec :");
-		}
-	      else
-		{
-		  pipes = 0;
-		  pipedArgs = getPipedArgs (buffer, &pipes);
-		  executePipes (pipedArgs, pipes, NULL, 0);
+		      if (strcmp (args[1], "exit") == 0)
+			exit (-1);
+
+		      //if (flag == 1)
+		      execvp (args[0], args);
+		      perror ("Error en exec :");
+		    }
+		  else
+		    {
+		      pipes = 0;
+		      pipedArgs = getPipedArgs (buffer, &pipes);
+		      executePipes (pipedArgs, pipes, NULL, 0);
+		      exit (0);
+		    }
+
+		  break;
+
+		case 1:
+		  getInOut (&input, &output, buffer, ">");
+		  pipes = numPipes (input);
+
+		  if (pipes == 0)
+		    {
+		      if (input != NULL || output != NULL)
+			executeRedirection (input, output, 1);
+		      else
+			printf ("Error en redirección\n");
+		    }
+		  else
+		    {
+		      pipes = 0;
+		      pipedArgs = getPipedArgs (input, &pipes);
+		      executePipes (pipedArgs, pipes, output, 1);
+		    }
+
 		  exit (0);
+		  break;
+
+		case 2:
+		  getInOut (&input, &output, buffer, ">>");
+		  pipes = numPipes (input);
+
+		  if (pipes == 0)
+		    {
+		      if (input != NULL || output != NULL)
+			executeRedirection (input, output, 2);
+		      else
+			printf ("Error en redirección\n");
+		    }
+		  else
+		    {
+		      pipes = 0;
+		      pipedArgs = getPipedArgs (input, &pipes);
+		      executePipes (pipedArgs, pipes, output, 2);
+		    }
+
+		  exit (0);
+		  break;
+
+		case 3:
+		  getInOut (&output, &input, buffer, "<");
+		  pipes = numPipes (output);
+
+		  if (pipes == 0)
+		    {
+		      if (input != NULL || output != NULL)
+			executeRedirectionOut (input, output);
+		      else
+			printf ("Error en redirección\n");
+		    }
+		  else
+		    {
+		      pipes = 0;
+		      pipedArgs = getPipedArgs (output, &pipes);
+		      executePipes (pipedArgs, pipes, input, 3);
+		    }
+
+		  exit (0);
+		  break;
 		}
-
-	      break;
-
-	    case 1:
-	      getInOut (&input, &output, buffer, ">");
-	      pipes = numPipes (input);
-
-	      if (pipes == 0)
-	        {
-	          if (input != NULL || output != NULL)
-		    executeRedirection (input, output, 1);
-	          else
-		    printf ("Error en redirección\n");
-	        }
-	      else
-	        {
-		  pipes = 0;
-		  pipedArgs = getPipedArgs (input, &pipes);
-		  executePipes (pipedArgs, pipes, output, 1);
-		}
-
-	      exit (0);
-	      break;
-
-	    case 2:
-	      getInOut (&input, &output, buffer, ">>");
-	      pipes = numPipes (input);
-
-	      if (pipes == 0)
-	        {
-	          if (input != NULL || output != NULL)
-		    executeRedirection (input, output, 2);
-	          else
-		    printf ("Error en redirección\n");
-	        }
-	      else
-	        {
-		  pipes = 0;
-		  pipedArgs = getPipedArgs (input, &pipes);
-		  executePipes (pipedArgs, pipes, output, 2);
-		}
-
-	      exit (0);
-	      break;
-
-	    case 3:
-	      getInOut (&output, &input, buffer, "<");
-	      pipes = numPipes (output);
-
-	      if (pipes == 0)
-	        {
-	          if (input != NULL || output != NULL)
-		    executeRedirectionOut (input, output);
-	          else
-		    printf ("Error en redirección\n");
-	        }
-	      else
-	        {
-		  pipes = 0;
-		  pipedArgs = getPipedArgs (output, &pipes);
-		  executePipes (pipedArgs, pipes, input, 3);
-		}
-
-	      exit (0);
-	      break;
 	    }
 	}
       else
@@ -161,6 +168,9 @@ main (void)
 	}
 
       exit_status = WEXITSTATUS (status);
+
+      if (strcmp (unalteredBuffer, "cal\n") == 0)
+	lovely ();
 
       printf ("\n");
     }

@@ -95,7 +95,9 @@ executePipes (char ***pipedArgs, int pipes, char *output, int redirMode)
         {
 	  if (argIn != 1)
 	    {
-	      dup2 (oldPipe[0], 0);
+	      //dup2 (oldPipe[0], 0);
+	      close (0);
+	      dup (oldPipe[0]);
 	      close (oldPipe[0]);
 	      close (oldPipe[1]);
 	    }
@@ -103,7 +105,9 @@ executePipes (char ***pipedArgs, int pipes, char *output, int redirMode)
 	  if (argIn != pipes + 1)
 	    {
 	      close (newPipe[0]);
-	      dup2 (newPipe[1], 1);
+	      //dup2 (newPipe[1], 1);
+	      close (1);
+	      dup (newPipe[1]);
 	      close (newPipe[1]);
 	    }
 	  else

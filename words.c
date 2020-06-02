@@ -271,3 +271,81 @@ shellPrompts (char *)
     {
     }
 }*/
+
+
+
+
+
+int
+checkEgg (int redirectionStatus, char *unalteredBuffer)
+{
+  if (redirectionStatus != 0)
+    return 0;
+
+  if (strcmp (unalteredBuffer, "painkiller\n") == 0)
+    {
+      painkiller ();
+      return 1;
+    }
+  else if (strcmp (unalteredBuffer, "tuscany\n") == 0)
+    {
+      tuscany ();
+      return 1;
+    }
+  else if (strcmp (unalteredBuffer, "redemption\n") == 0)
+    {
+      redemption ();
+      return 1;
+    }
+  else if (strcmp (unalteredBuffer, "redemption2\n") == 0)
+    {
+      redemption2 ();    
+      return 1;
+    }
+
+  return 0;
+}
+
+void
+lovely (void)
+{
+  printf ("\n\tWhat a day, what a lovely day!\n");
+}
+
+void
+painkiller (void)
+{
+  printf ("\n\tThis day will last forever");
+  printf ("\n\tDeep in the hearts of men");
+  printf ("\n\tCourage and victory");
+  printf ("\n\tRemember, remember!");
+
+  printf ("\n\n\tOne shot at glory");
+  printf ("\n\tDriving hard and seeing red");
+  printf ("\n\tDestiny calls me");
+  printf ("\n\tOne night of fire, one shot at glory\n");
+}
+
+void
+redemption (void)
+{
+  printf ("\n\tPeople don't forget. Nothing gets forgiven\n");
+}
+
+void
+redemption2 (void)
+{
+  printf ("\n\tWe're thieves, in a world that don't want us no more\n");
+}
+
+void
+tuscany (void)
+{
+  printf ("\n\tCould this be the end? Is this the way I die?");
+  printf ("\n\tSitting here alone"); 
+  printf ("\n\tNo one by my side");
+
+  printf ("\n\n\tI don't understand"); 
+  printf ("\n\tI don't feel that I deserve this");
+  printf ("\n\tWhat did I do wrong? I just don't understand\n");
+}

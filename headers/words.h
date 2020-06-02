@@ -11,4 +11,11 @@ int numPipes (char *);
 char *trimLeadingSpace (char *str);
 void trimTrailingSpace (char *str);
 
+int checkEgg (int, char *);
+void lovely ();
+void painkiller ();
+void redemption ();
+void redemption2 ();
+void tuscany ();
+
 #endif
