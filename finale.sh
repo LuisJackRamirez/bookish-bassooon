@@ -5,6 +5,8 @@ do
 	gcc -g -c $i
 done
 
+gcc -g commandExec.o -o comando.x
+
 rm commandExec.o
 
 gcc -g *.o -o terminalTest.x
