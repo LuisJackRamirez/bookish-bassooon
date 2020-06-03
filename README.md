@@ -19,4 +19,4 @@ TODO:
     * hello: greets the current user.
     * info: info about the project. Don't think it would be wise to put my real name here, haha. Probably should use GitHub username.
     * If the calendar gets summoned, concat "What a day, what a lovely day!" at the end.
-  * Clear the shell, for a cleaner look.
+  * ~Clear the shell, for a cleaner look.~ Done, thanks to the shell script.
