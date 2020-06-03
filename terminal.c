@@ -33,8 +33,26 @@ main (void)
 
   while (1)
     {
-      if (exit_status != 0)
+      if (exit_status < 0 || exit_status > 128)
 	break;
+
+      pid = fork ();
+
+      if (pid == -1)
+	{
+	  perror ("Error en la llamada a fork ()");
+	  exit (-1);
+	}
+      else if (pid == 0)
+	{
+          getPrompt (prompt);
+	  printf ("%s", prompt);
+	  exit (0);
+	}
+      else
+        {
+          wait (&status);
+	}
 
       pid = fork ();
 
@@ -49,14 +67,15 @@ main (void)
 
 	  //Se obtiene el prompt desde
 	  //el archivo prompt.c.
-	  getPrompt (prompt);
-	  printf ("%s", prompt);
+	  
+	  //getPrompt (prompt);
+ 	  //printf ("%s", prompt);
 
 	  //Recibir la linea de comandos de entrada.
 	  fgets (buffer, 256, stdin);
 	  strcpy (unalteredBuffer, buffer);
 
-	  //shellPrompts (buffer);
+	  //shellPrompts (unalteredBuffer);
 
 	  //Descubrir si hay redirección > >> < en la entrada.
 	  //  0. No hay redirección.
@@ -80,7 +99,7 @@ main (void)
 		      args = getArgs (buffer);
 
 		      if (strcmp (args[1], "exit") == 0)
-			exit (-1);
+		        _exit (-1);
 
 		      //if (flag == 1)
 		      execvp (args[0], args);
@@ -167,10 +186,8 @@ main (void)
 	  wait (&status);
 	}
 
-      exit_status = WEXITSTATUS (status);
-
-      if (strcmp (unalteredBuffer, "cal\n") == 0)
-	lovely ();
+      if (WIFEXITED (status))
+	exit_status = WEXITSTATUS (status);
 
       printf ("\n");
     }
