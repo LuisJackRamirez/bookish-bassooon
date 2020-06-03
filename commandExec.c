@@ -1,10 +1,17 @@
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
+void
+abrt_handler (int sig);
+
 int 
 main (char argc, char *argv[])
 {
+  signal (SIGABRT, abrt_handler);
+
+  int returnVal = 0;
   int j = 0;
 
   char *args[] = {};
@@ -14,7 +21,13 @@ main (char argc, char *argv[])
 
   args[j - 1] = NULL;
 
-  execvp (argv[1], args);
+  returnVal = execvp (argv[1], args);
   
-  return 0;
+  return (returnVal);
+}
+
+void
+abrt_handler (int sig)
+{
+  printf ("Couldn't execute command.\n");
 }
