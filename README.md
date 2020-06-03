@@ -3,6 +3,7 @@ Shell terminal made in C
 
 TODO:
 
+* VERY IMPORTANT: Handle code error. Should go back to the terminal if anything wrong happens (e.g. more)
 * ~~Replace dup2 with close -> dup. This is vital.~~ I think this is done.
 * Redirection : 
   * Add support for multiple redirection. Should improve the experience, but will be treated as optional.
