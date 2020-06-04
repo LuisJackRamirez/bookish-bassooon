@@ -23,6 +23,8 @@ main (void)
 }
 */
 
+//Función que revisa por algún comando
+//de redirección en el buffer de entrada
 int
 checkRedirection (char *buffer)
 {
@@ -44,6 +46,9 @@ checkRedirection (char *buffer)
   return 0;
 }
 
+//Función que realiza el procesamiento
+//de la cadena de entrada y la de salida,
+//separando con el caracter solicitad
 void
 getInOut (char **input, char **output, char *buffer, char *sep)
 {
@@ -53,19 +58,21 @@ getInOut (char **input, char **output, char *buffer, char *sep)
   char *in = NULL;
   char *o = NULL;
 
+  //Obtener las cadenas
   i = strtok (buffer, sep);
   o = strtok (NULL, sep);
 
+  //Eliminar espacios innecesarios
   trimTrailingSpace (i);
   o = trimLeadingSpace (o);
   trimTrailingSpace (o);
 
   length = strlen (i);
 
+  //Conseguir el espacio para 
+  //la cadena de entrada final
   in = malloc (sizeof (char) * (length + 2));
-
   memset (in, 0, sizeof (char) * (length + 2));
-
   in = strcpy (in, i);
   in[strlen (in)] = '\n';
   //in[strlen (in) + 1] = '\0';
@@ -76,6 +83,9 @@ getInOut (char **input, char **output, char *buffer, char *sep)
   return;
 }
 
+//Función para obtener un conjunto de
+//cadenas, cada una representan un comando 
+//y sus parámetros, si es que los tiene.
 char **
 getArgs (char *buffer)
 {
@@ -109,6 +119,10 @@ getArgs (char *buffer)
   return args;
 }
 
+//Función que procesa el buffer de entrada
+//para obtener el conjunto de arreglos de
+//cadenas que representan los varios comandos con
+//sus argumentos al ejecutar una función con tuberías.
 char ***
 getPipedArgs (char *buffer, int *pipes)
 {
@@ -120,7 +134,9 @@ getPipedArgs (char *buffer, int *pipes)
 
   if (*pipes != 0)
     {
+      //Arreglo de cadenas
       group = getStrGroup (buffer, *pipes);
+      //Conjunto de arreglos
       pipedArgs = getGroupSet (group, *pipes);
 
       return pipedArgs;
@@ -131,19 +147,21 @@ getPipedArgs (char *buffer, int *pipes)
   free (group);
 }
 
+//Función para obtener el conjunto 
+//de arreglos de cadenas
 char ***
 getGroupSet (char **group, int pipes)
 {
   char ***pipedArgs;
   int i = 0;
 
+  //Obtener memoria para el conjunto
   pipedArgs = malloc ((pipes + 1) * sizeof (char **) + 1);
   memset (pipedArgs, 0, (pipes + 1) * sizeof (char **) + 1);
 
   while (i <= pipes)
     {
       pipedArgs[i] = getArgs (group[i]);
-
       i++;
     }
 
@@ -151,6 +169,8 @@ getGroupSet (char **group, int pipes)
   return pipedArgs;
 }
 
+//Función para obtener los arreglos
+//de cadenas de comandos y argumentos
 char **
 getStrGroup (char *buffer, int pipes)
 {
@@ -158,9 +178,11 @@ getStrGroup (char *buffer, int pipes)
   char *in;
   char **group;
 
+  //Obtener memoria para el arreglo
   group = malloc ((pipes + 1) * sizeof (char *));
   memset (group, 0, sizeof (char *) * (pipes + 1));
 
+  //Procesamiento del buffer
   group[0] = strtok (buffer, "|");
   group[0] = trimLeadingSpace (group[0]);
   trimTrailingSpace (group[0]);
@@ -175,11 +197,11 @@ getStrGroup (char *buffer, int pipes)
       i++;
     }
 
+  //Obtención de memoria y procesamiento final
   i = 0;
   while (i <= pipes)
     {
       in = malloc ((sizeof (char) * strlen (group[i])) + 3);
-
       memset (in, 0, sizeof (char) * strlen (group[i]) + 3);
 
       in = strcpy (in, group[i]);
@@ -194,6 +216,9 @@ getStrGroup (char *buffer, int pipes)
   return group;
 }
 
+//Función que cuenta el número de
+//operadores de tubería '|' en el
+//buffer de entrada.
 int
 numPipes (char *buffer)
 {
@@ -211,6 +236,8 @@ numPipes (char *buffer)
   return pipes;
 }
 
+//Función que elimina espacios en blanco
+//que preceden a una cadena
 char *
 trimLeadingSpace (char *str)
 {
@@ -230,6 +257,8 @@ trimLeadingSpace (char *str)
   return in;
 }
 
+//Función que elimina espacios en blanco
+//que preceden a una cadena
 void
 trimTrailingSpace (char *str)
 {
@@ -252,6 +281,8 @@ trimTrailingSpace (char *str)
   return;
 }
 
+//Función que revisa comandos especiales,
+//como 'hello', 'exit'
 /*
 void
 shellPrompts (char *)
@@ -275,7 +306,7 @@ shellPrompts (char *)
 
 
 
-
+//Easter eggs
 int
 checkEgg (int redirectionStatus, char *unalteredBuffer)
 {
