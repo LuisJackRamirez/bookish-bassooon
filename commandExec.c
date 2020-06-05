@@ -16,6 +16,9 @@ main (char argc, char *argv[])
   int argsNum = argc - 1;
   int j = 0;
 
+  if (argsNum == 0)
+    return 0;
+
   //char *args[] = {};
   args = malloc ((sizeof (char *) * argsNum) + 1);
 
