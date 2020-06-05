@@ -8,9 +8,7 @@ TODO:
   * Add support for multiple redirection. Should improve the experience, but will be treated as optional.
   * Move input redirection to only one function (check pipes.c), to reduce code.
 * Code format :
-  * ~Add comments (in Spanish) to facilitate comprehension for all .c files.~ Done.
-  * ~Errors should be standarized.~ Also done.
-  * Remove commented code WITH CAUTION.
+  * ~Remove commented code WITH CAUTION.~ Done
 * Pipes :
   * Small memory issue with pipes.c: Uninitialized memory. Doesn't cause any known issues, no memory leak.
 * Shell presentation. All of this is optional.
