@@ -9,10 +9,10 @@ gcc -g commandExec.o -o comando.x
 
 rm commandExec.o
 
-gcc -g *.o -o terminalTest.x
+gcc -g *.o -o terminal.x
 
 rm *.o
 
 clear
 
-./terminalTest.x
+./terminal.x
