@@ -38,5 +38,5 @@ main (char argc, char *argv[])
 void
 abrt_handler (int sig)
 {
-  printf ("Couldn't execute command.\n");
+  printf ("\n\tError en execvp: main (), commandExec.c en línea 30 :: Couldn't execute command.\n");
 }
