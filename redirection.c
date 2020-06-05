@@ -57,7 +57,7 @@ executeRedirection (char *input, char *output, int mode)
     {
       perror
 	("\n\tError en open: executeRedirection (), redirection.c en línea 48/50 :");
-      exit (-1);
+      exit (1);
     }
 
   pid = fork ();
@@ -110,7 +110,7 @@ executeRedirectionOut (char *input, char *output)
     {
       perror
 	("\n\tError en open: executeRedirectionOut (), redirection.c en línea 95 :");
-      exit (-1);
+      exit (1);
     }
 
   pid = fork ();

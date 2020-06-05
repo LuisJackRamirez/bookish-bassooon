@@ -62,7 +62,7 @@ executePipes (char ***pipedArgs, int pipes, char *output, int redirMode)
 	    {
               perror 
  	        ("\n\tError en open: executePipes (), pipes.c en línea 59 :");
-              exit (-1);
+              exit (1);
 	    }
 
 	  close (0);
@@ -72,7 +72,7 @@ executePipes (char ***pipedArgs, int pipes, char *output, int redirMode)
       if (out == -1)
         {
           perror ("\n\tError en open: executePipes (), pipes.c en línea 54/56 :");
-          exit (-1);
+          exit (1);
 	}
     }
   else
@@ -146,8 +146,7 @@ executePipes (char ***pipedArgs, int pipes, char *output, int redirMode)
 	    }
 
 	  execvp (*(pipedArgs[0]), *pipedArgs);
-	  perror ("Error en exec ");
-	  exit (-1);
+          perror ("\n\tError en exec: executePipes (), pipes.c en línea 148 :");
 	}
 
       //Proceso padre
