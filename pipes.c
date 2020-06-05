@@ -9,27 +9,6 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 
-/*
-int
-main (void)
-{
-  char buffer[256];
-  char ***pipedArgs;
-  int pipes = 0;
-
-  fgets (buffer, sizeof (buffer), stdin);
-
-  pipedArgs = getPipedArgs (buffer, &pipes);
-
-  if (pipedArgs != NULL)
-    executePipes (pipedArgs, pipes, NULL, 0);
-  else
-    printf ("No pipes\n");
-
-  exit (0);
-}
-*/
-
 //Función que realiza la ejecución de
 //los comandos de tubería.
 void
@@ -61,7 +40,7 @@ executePipes (char ***pipedArgs, int pipes, char *output, int redirMode)
 	  if (in == -1)
 	    {
               perror 
- 	        ("\n\tError en open: executePipes (), pipes.c en línea 59 :");
+ 	        ("\n\tError en open: executePipes (), pipes.c en línea 38 :");
               exit (1);
 	    }
 
@@ -71,7 +50,7 @@ executePipes (char ***pipedArgs, int pipes, char *output, int redirMode)
       
       if (out == -1)
         {
-          perror ("\n\tError en open: executePipes (), pipes.c en línea 54/56 :");
+          perror ("\n\tError en open: executePipes (), pipes.c en línea 33/35 :");
           exit (1);
 	}
     }
@@ -82,7 +61,7 @@ executePipes (char ***pipedArgs, int pipes, char *output, int redirMode)
 
       if (out == -1)
         {
-          perror ("\n\tError en dup: executePipes (), pipes.c en línea 80 :");
+          perror ("\n\tError en dup: executePipes (), pipes.c en línea 60 :");
           exit (-1);
 	}
     }
@@ -94,17 +73,15 @@ executePipes (char ***pipedArgs, int pipes, char *output, int redirMode)
         {
 	  if (pipe (newPipe) == -1)
 	    {
-              perror ("\n\tError en pipe: executePipes (), pipes.c en línea 95 :");
+              perror ("\n\tError en pipe: executePipes (), pipes.c en línea 74 :");
 	      exit (-1);
 	    }
 	}
 
       pid = fork ();
-
-      //Error en fork
       if (pid == -1)
         {
-          perror ("\n\tError en pid: executePipes (), pipes.c en línea 102 :");
+          perror ("\n\tError en pid: executePipes (), pipes.c en línea 81 :");
 	  exit (-1);
 	}
 
@@ -117,7 +94,6 @@ executePipes (char ***pipedArgs, int pipes, char *output, int redirMode)
 	  //cierran los duplicados de la tubería.
 	  if (argIn != 1)
 	    {
-	      //dup2 (oldPipe[0], 0);
 	      close (0);
 	      dup (oldPipe[0]);
 	      close (oldPipe[0]);
@@ -130,7 +106,6 @@ executePipes (char ***pipedArgs, int pipes, char *output, int redirMode)
 	  if (argIn != pipes + 1)
 	    {
 	      close (newPipe[0]);
-	      //dup2 (newPipe[1], 1);
 	      close (1);
 	      dup (newPipe[1]);
 	      close (newPipe[1]);
@@ -146,7 +121,7 @@ executePipes (char ***pipedArgs, int pipes, char *output, int redirMode)
 	    }
 
 	  execvp (*(pipedArgs[0]), *pipedArgs);
-          perror ("\n\tError en exec: executePipes (), pipes.c en línea 148 :");
+          perror ("\n\tError en exec: executePipes (), pipes.c en línea 123 :");
 	}
 
       //Proceso padre

@@ -8,30 +8,6 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-/*
-int
-main (void)
-{
-  int mode = 0;
-
-  char buffer[256];
-  char *in;
-  char *out;
-
-  fgets (buffer, sizeof (buffer), stdin); 
-  mode = checkRedirection (buffer);
-		
-  getInOut (&in, &out, buffer, ">");
-
-  if (in != NULL || out != NULL)
-    executeRedirection (in, out, 1);
-  else
-    printf ("Error en redirección\n");
-  
-  exit (0);
-}
-*/
-
 //Función que ejecuta la redirección de
 //entrada con sobreescritura o concatenación, 
 //y la redirección de salida.
@@ -56,30 +32,27 @@ executeRedirection (char *input, char *output, int mode)
   if (fileDes == -1)
     {
       perror
-	("\n\tError en open: executeRedirection (), redirection.c en línea 48/50 :");
+	("\n\tError en open: executeRedirection (), redirection.c en línea 28/30 :");
       exit (1);
     }
 
   pid = fork ();
-
   if (pid == -1)
     {
       perror
-	("\n\tError en fork: executeRedirection (), redirection.c en línea 59 :");
+	("\n\tError en fork: executeRedirection (), redirection.c en línea 39 :");
       exit (-1);
     }
   else if (pid == 0)
     {
       //Se cierra la salida estándar, es reemplazada
       //por el descriptor de archivo obtenido previamente.
-
-      //dup2 (fileDes, fileno (stdout));  
       close (1);
       dup (fileDes);
 
       execvp (inArgs[0], inArgs);
       perror
-	("\n\tError en execvp: executeRedirection (), redirection.c en línea 72 :");
+	("\n\tError en execvp: executeRedirection (), redirection.c en línea 53 :");
     }
   else
     {
@@ -109,30 +82,27 @@ executeRedirectionOut (char *input, char *output)
   if (fileDes == -1)
     {
       perror
-	("\n\tError en open: executeRedirectionOut (), redirection.c en línea 95 :");
+	("\n\tError en open: executeRedirectionOut (), redirection.c en línea 80 :");
       exit (1);
     }
 
   pid = fork ();
-
   if (pid == -1)
     {
       perror
-	("\n\tError en fork: executeRedirectionOut (), redirection.c en línea 106 :");
+	("\n\tError en fork: executeRedirectionOut (), redirection.c en línea 89 :");
       exit (-1);
     }
   else if (pid == 0)
     {
       //Se cierra la salida estándar, es reemplazada
       //por el descriptor de archivo obtenido previamente.
-
-      //dup2 (fileDes, fileno (stdout));  
       close (0);
       dup (fileDes);
 
       execvp (inArgs[0], inArgs);
       perror
-	("\n\tError en execvp: executeRedirectionOut (), redirection.c en línea 120 :");
+	("\n\tError en execvp: executeRedirectionOut (), redirection.c en línea 104 :");
     }
   else
     {

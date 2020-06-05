@@ -73,8 +73,8 @@ getOutput (char *str, char *command)
   if (fgets (buffer, sizeof (buffer), fp) != NULL)
     strcpy (str, buffer);
 
-  //Eliminación del salto de línea concatenado
-  //por la función fgets
+  //Eliminación del salto de línea 
+  //concatenado por la función fgets
   aux = strchr (str, '\n');
   if (aux != NULL)
     *aux = '\0';

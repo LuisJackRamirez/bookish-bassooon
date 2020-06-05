@@ -4,25 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-/*
-int
-main (void)
-{
-  int mode = 0;	
-  char buffer[256];
-  char *input;
-  char *output;
-
-  fgets (buffer, sizeof (buffer), stdin);
-  scanf ("%i", &mode);
-
-  getInOut (&input, &output, buffer); 
-  executeRedirection (input, output, mode);
-
-  return 0;
-}
-*/
-
 //Función que revisa por algún comando
 //de redirección en el buffer de entrada
 int
@@ -75,7 +56,6 @@ getInOut (char **input, char **output, char *buffer, char *sep)
   memset (in, 0, sizeof (char) * (length + 2));
   in = strcpy (in, i);
   in[strlen (in)] = '\n';
-  //in[strlen (in) + 1] = '\0';
 
   *output = o;
   *input = in;

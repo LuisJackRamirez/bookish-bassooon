@@ -12,16 +12,13 @@
 int
 main (void)
 {
-  int calledExit = 0;
   int exit_status = 0;
-  int flag = 1;
   int i = 0;
   int pid = 0;
   int pipes = 0;
   int status = 0;
   int redirectionStatus = 0;
 
-  char aux;
   char buffer[256];
   char unalteredBuffer[256];
   char prompt[256];
@@ -36,11 +33,12 @@ main (void)
       if (exit_status < 0 || exit_status > 128)
 	break;
 
+      //Se obtiene el prompt desde
+      //el archivo prompt.c.
       pid = fork ();
-
       if (pid == -1)
 	{
-	  perror ("Error en la llamada a fork ()");
+	  perror ("Error en fork (): main (), terminal.c en línea 38 :");
 	  exit (-1);
 	}
       else if (pid == 0)
@@ -55,22 +53,13 @@ main (void)
 	}
 
       pid = fork ();
-
       if (pid == -1)
 	{
-	  perror ("Error en la llamada a fork ()");
+	  perror ("Error en fork (): main (), terminal.c en línea 55 :");
 	  exit (-1);
 	}
       else if (pid == 0)
 	{
-	  flag = 1;
-
-	  //Se obtiene el prompt desde
-	  //el archivo prompt.c.
-	  
-	  //getPrompt (prompt);
- 	  //printf ("%s", prompt);
-
 	  //Recibir la linea de comandos de entrada.
 	  fgets (buffer, 256, stdin);
 	  strcpy (unalteredBuffer, buffer);
@@ -101,9 +90,8 @@ main (void)
 		      if (strcmp (args[1], "exit") == 0)
 		        _exit (-1);
 
-		      //if (flag == 1)
 		      execvp (args[0], args);
-		      perror ("Error en exec :");
+	 	      perror ("\n\tError en exec: main (), terminal.c en línea 93 :");
 		    }
 		  else
 		    {
@@ -124,7 +112,7 @@ main (void)
 		      if (input != NULL || output != NULL)
 			executeRedirection (input, output, 1);
 		      else
-			printf ("Error en redirección\n");
+			printf ("\n\tError en redirección: main (), terminal.c en línea 113 :: Bad input/output parsing\n");
 		    }
 		  else
 		    {
@@ -145,7 +133,7 @@ main (void)
 		      if (input != NULL || output != NULL)
 			executeRedirection (input, output, 2);
 		      else
-			printf ("Error en redirección\n");
+			printf ("\n\tError en redirección: main (), terminal.c en línea 134 :: Bad input/output parsing\n");
 		    }
 		  else
 		    {
@@ -166,7 +154,7 @@ main (void)
 		      if (input != NULL || output != NULL)
 			executeRedirectionOut (input, output);
 		      else
-			printf ("Error en redirección\n");
+			printf ("\n\tError en redirección: main (), terminal.c en línea 155 :: Bad input/output parsing\n");
 		    }
 		  else
 		    {
@@ -181,10 +169,7 @@ main (void)
 	    }
 	}
       else
-	{
-	  //pid = wait (&status);
-	  wait (&status);
-	}
+	wait (&status);
 
       if (WIFEXITED (status))
 	exit_status = WEXITSTATUS (status);
