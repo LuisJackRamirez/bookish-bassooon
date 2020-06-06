@@ -329,12 +329,7 @@ painkiller (void)
   printf ("\n\tThis day will last forever");
   printf ("\n\tDeep in the hearts of men");
   printf ("\n\tCourage and victory");
-  printf ("\n\tRemember, remember!");
-
-  printf ("\n\n\tOne shot at glory");
-  printf ("\n\tDriving hard and seeing red");
-  printf ("\n\tDestiny calls me");
-  printf ("\n\tOne night of fire, one shot at glory\n");
+  printf ("\n\tRemember, remember!\n");
 }
 
 void
@@ -353,10 +348,7 @@ void
 tuscany (void)
 {
   printf ("\n\tCould this be the end? Is this the way I die?");
-  printf ("\n\tSitting here alone"); 
-  printf ("\n\tNo one by my side");
-
-  printf ("\n\n\tI don't understand"); 
-  printf ("\n\tI don't feel that I deserve this");
+  printf ("\n\tSitting here alone, no one by my side");
+  printf ("\n\tI don't understand, I don't feel that I deserve this");
   printf ("\n\tWhat did I do wrong? I just don't understand\n");
 }
