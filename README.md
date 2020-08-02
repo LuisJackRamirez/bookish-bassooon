@@ -1,18 +1,11 @@
 # bookish-bassooon
-Shell terminal made in C
+Shell terminal written in C
 
-TODO:
+This is a compilation of files that simulate a Linux command interpreter, including a shell script that compiles and executes the program. The code is free for anyone to use, as its main purpose is to help Operational System in developing similar applications.
 
-* ~VERY IMPORTANT: Handle code error. Should go back to the terminal if anything wrong happens (e.g. more)~. This is probably done, more tests are in order.
-* Redirection : 
-  * Add support for multiple redirection. Should improve the experience, but will be treated as optional.
-  * Move input redirection to only one function (check pipes.c), to reduce code.
-* Code format :
-  * ~Remove commented code WITH CAUTION.~ Done
-* Pipes :
-  * Small memory issue with pipes.c: Uninitialized memory. Doesn't cause any known issues, no memory leak.
-* Shell presentation. All of this is optional.
-  * Finish special shell prompts. Extra commands that greet the user. 
-    * hello: greets the current user.
-    * info: info about the project. Don't think it would be wise to put my real name here, haha. Probably should use GitHub username.
-    * ~If the calendar gets summoned, concat "What a day, what a lovely day!" at the end.~ Sadly this will not be implemented yet.
+To run this shell terminal, make sure you're working on Ubuntu 18.04. Clone the entire repository in the directory of your choice, and run the shell script. You should be able to see the prompt in which you can begin type the desired commands (commands using both input and output redirection is currently not supported).
+
+
+I'm open to contributions! Feel free to contact me at luisjackramirez@gmail.com if you have any idea in your mind; you can see the planned TODO list in the repository.
+
+Huge thanks to the developers of Valgrind, whose framework allowed me to fix memory issues throughout the project. 
